@@ -1,14 +1,19 @@
 import React from 'react'
+import Button from './Button';
 
-const Item = (items) => {
+const Item = ({ item, onDelete }) => { 
   return (
     <div>
         <ul>
-            <li>{items.name}</li>
-            <li>{items.price}</li>
+            <li>{item.name}</li>
+            <li>{item.price}</li>
+            <li>
+              <Button click={() => onDelete(item.id)}
+              name={"X"} />
+            </li>
         </ul>
     </div>
-  )
-}
+  );
+};
 
-export default Item
+export default Item;
