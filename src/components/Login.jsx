@@ -1,35 +1,60 @@
-import * as React from 'react';
-import { AppProvider } from '@toolpad/core/AppProvider';
-import { SignInPage } from '@toolpad/core/SignInPage';
-import { useTheme } from '@mui/material/styles';
+import { Box, Button, TextField } from '@mui/material';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-// preview-start
-const providers = [{ id: 'credentials', name: 'Email and Password' }];
-// preview-end
+const Login = ({ login }) => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-const signIn = async (provider, formData) => {
-  const promise = new Promise((resolve) => {
-    setTimeout(() => {
-      alert(
-        `Signing in with "${provider.name}" and credentials: ${formData.get('email')}, ${formData.get('password')}`,
-      );
-      resolve();
-    }, 300);
-  });
-  return promise;
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (!username || !password) {
+      alert("Los campos no deben estar vacíos");
+      return;
+    }
+    if (login({ username, password })) {
+      alert("Login exitoso");
+      setUsername("");
+      setPassword("");
+      navigate("/items");
+    } else {
+      alert("Login fallido");
+      setUsername("");
+      setPassword("");
+    }
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <Box
+        margin="auto"
+        flexDirection="column"
+        display="flex"
+        width={400}
+        marginTop={"20px"}
+      >
+        <TextField
+          label="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          variant="outlined"
+          margin="normal"
+        />
+        <TextField
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          variant="outlined"
+          margin="normal"
+          type="password"
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Login
+        </Button>
+      </Box>
+    </form>
+  );
 };
 
-export default function CredentialsSignInPage() {
-  const theme = useTheme();
-  return (
-    // preview-start
-    <AppProvider theme={theme}>
-      <SignInPage
-        signIn={signIn}
-        providers={providers}
-        slotProps={{ emailField: { autoFocus: false } }}
-      />
-    </AppProvider>
-    // preview-end
-  );
-}
+export default Login;

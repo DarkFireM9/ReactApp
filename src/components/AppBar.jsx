@@ -15,9 +15,9 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 
 const pages = ['Articulos', 'Añadir'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Logout'];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar(setLogout) {
     const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -39,8 +39,12 @@ function ResponsiveAppBar() {
     }
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (e) => {
     setAnchorElUser(null);
+    if (e.target.textContent === settings[0]){
+      setLogout();
+        navigate("/");
+    }
   };
 
   return (
