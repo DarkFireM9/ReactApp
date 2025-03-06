@@ -1,55 +1,72 @@
 import './App.css';
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import List from './components/List';
+import { useEffect, useState } from 'react';
+// import Footer from './components/Footer';
+import List from './pages/list';
 import Add from './components/Add';
-import ResponsiveAppBar from './components/AppBar';
-import Login from './components/Login';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ResponsiveAppBar from './components/Appbar';
+import Homepage from './pages/Homepage';
+import Login from './pages/Login';
 
 function App() {
-  const [items, setItems] = useState([
-    { id: 1, name: "item 1", price: 1 },
-    { id: 2, name: "item 2", price: 2 },
-    { id: 3, name: "item 3", price: 3 },
-  ]);
-
+  const [items, setItems] = useState([]);
+  // const [count, setCount] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
+  useEffect(() => {if (isLogin) {getItems();}}, [isLogin ]);
 
-  const add = (item) => {
-    item.id = Date.now();
-    setItems([...items, item]);
+  const getItems = async () => {
+    const result = await fetch("http://localhost:5001/items/");
+    const data = await result.json();
+    setItems(data);
+
+  };
+  
+  //const sum = () => {
+    // setCount(count + 1);
+  //};
+  //const resta = () => {
+    //setCount(count - 1);
+  //};
+
+  const add = async (item) => {
+    //item.id = items.length + 1; 
+    const result = await fetch("http://localhost:5001/items/", {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(item), });
+    const data = await result.json();
+    setItems([...items, data.item]);
   };
 
-  const del = (id) => {
+  const del = async (id) => {
+    await fetch("http://localhost:5001/items/" + id, {method:"DELETE"});
     setItems(items.filter((item) => item.id !== id));
   };
 
-  const login = (user) => {
-    if (user.username === "admin" && user.password === "admin") {
-      setIsLogin(true);
-      return true;
-    }
-    return false;
+  const login = async (user) => {
+    const result = await fetch("http://localhost:5001/login/", {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(user), });
+    const data = await result.json();
+    setIsLogin(data.isLogin);
+    // return data.isLogin;
+    //if (user.username === "admin" && user.password === "admin") {
+    //setIsLogin(true);
+    //}
+    return isLogin;
   };
 
-  const setLogout = () => {
+  const logout = () => {
     setIsLogin(false);
-  };
-
+  }
   return (
     <div>
-      <Router>
-        {isLogin && <ResponsiveAppBar setLogout={setLogout} />}
-        <Header />
+      <BrowserRouter> 
+        {isLogin && <ResponsiveAppBar logout={logout}/>}
         <Routes>
-          <Route path="/" element={<Login login={login} />} />
+          <Route path="/" element={<Login login={login}/>} />
           <Route path="/add" element={<Add add={add} />} />
-          <Route path="/items" element={<List items={items} onDelete={del} />} />
+          <Route path="/items" element={<List items={items} ondelete={del} />} />
+          <Route path="/home" element={<Homepage/>} />
         </Routes>
-        <Footer />
-      </Router>
+      </BrowserRouter>
+      
+
     </div>
   );
 }
