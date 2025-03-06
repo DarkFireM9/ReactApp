@@ -1,12 +1,12 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 // import Footer from './components/Footer';
-import List from './pages/list';
+import List from './components/List';
 import Add from './components/Add';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ResponsiveAppBar from './components/Appbar';
-import Homepage from './pages/Homepage';
-import Login from './pages/Login';
+import ResponsiveAppBar from './components/AppBar';
+import Homepage from './components/Bienvenida';
+import Login from './components/Login';
 
 function App() {
   const [items, setItems] = useState([]);
